@@ -250,8 +250,8 @@ export function TiledArea() {
                             Math.min(Math.pow(2, zoomLevel), Math.ceil(((zoom.x().domain()[1] - minX) - epsilon) / tileWidth)));
 
                     if (! oneDimensional ) {
-                        let cols = d3.range(Math.floor((zoom.y().domain()[0] - minY) / tileHeight),
-                                Math.ceil(((zoom.y().domain()[1] - minY) - epsilon) / tileHeight));
+                        let cols = d3.range(Math.max(0,Math.floor((zoom.x().domain()[0] - minX) / tileWidth)),
+                                Math.min(Math.pow(2, zoomLevel), Math.ceil(((zoom.x().domain()[1] - minX) - epsilon) / tileWidth)));
 
                         for (let i = 0; i < rows.length; i++) {
                             for (let j = 0; j < cols.length; j++) {
@@ -264,6 +264,7 @@ export function TiledArea() {
                     }
 
                     dispatch.draw();
+                    
 
                     refreshTiles(tiles);
                 }
@@ -498,6 +499,12 @@ export function TiledArea() {
     chart.scaleExtent = function(_) {
         if (!arguments) return scaleExtent;
         else scaleExtent = _;
+        return chart;
+    }
+
+    chart.oneDimensional = function(_) {
+        if (!arguments) return oneDimensional;
+        else oneDimensional = _;
         return chart;
     }
 
