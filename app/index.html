@@ -41,8 +41,8 @@ var svg = d3.select('#circle').append('svg')
 let searchField = null;
 
 goomba.ChromosomeInfo(chromInfoFilename, (chromInfo) => {
-    let xScale = d3.scale.linear().domain([0, chromInfo.totalLength])
-    //let xScale = d3.scale.linear().domain([0, 10000000])
+    //let xScale = d3.scale.linear().domain([0, chromInfo.totalLength])
+    let xScale = d3.scale.linear().domain([0, 3000000])
         .range([0, width - margin.left - margin.right]);
 
 
@@ -119,16 +119,10 @@ goomba.ChromosomeInfo(chromInfoFilename, (chromInfo) => {
     .append('g')
     .attr('transform', 'translate(0,' + (tileDirectories.length * trackHeight) + ')')
     .selectAll('g')
-    //.data(['//search-es4dn-z7rzz4kevtoyh5pfjkmjg5jsga.us-east-1.es.amazonaws.com/hg19/wgEncodeSydhTfbsGm12878InputStdSig.bigWig.bedGraph.genome.sorted.gz'])
 
     .data([
-        /*
-        '//search-es4dn-z7rzz4kevtoyh5pfjkmjg5jsga.us-east-1.es.amazonaws.com/hg19/wgEncodeSydhTfbsGm12878Ctcfsc15914c20StdSig.bigWig.bedGraph.genome.sorted.gz',
-    '//search-es4dn-z7rzz4kevtoyh5pfjkmjg5jsga.us-east-1.es.amazonaws.com/hg19/wgEncodeSydhTfbsGm12878Pol2s2IggmusSig.bigWig.bedGraph.genome.sorted.gz',
-    awsDomain + '/hg19/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.gz',
-        awsDomain + '/hg19/E116-DNase.fc.signal.bigwig.bedGraph.genome.sorted.gz'
-    */
-        awsDomain + '/hg19/E116-DNase.fc.signal.bigwig.bedGraph.genome.sorted.gz'
+        awsDomain + '/tiles_test/E116-DNase.fc.signal.bigwig.bedGraph.genome.sorted.short.gz',
+        awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'
     ])
 
     .enter()
