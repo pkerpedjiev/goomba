@@ -891,6 +891,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                return xScale(tileXScale(i));
 	            }).attr('width', function (d, i) {
 	                return xScale(tileXScale(i + 1)) - xScale(tileXScale(i));
+	            }).attr('y', function (d, i) {
+	                var toScale = d / Math.pow(2, tile.maxZoom - tile.tilePos[0]);
+
+	                return height - yScale(d);
 	            }).attr('height', function (d, i) {
 	                var toScale = d / Math.pow(2, tile.maxZoom - tile.tilePos[0]);
 
