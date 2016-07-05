@@ -3,7 +3,6 @@ import d3 from 'd3';
 import slugid from 'slugid';
 
 export function ChromosomeAxis(chromInfoFile) {
-    let bisect = d3.bisector(function(d) { return d.pos; }).left;
     let width = 600;
     let zoomDispatch = null;
     let domain = [0,1];
@@ -16,7 +15,6 @@ export function ChromosomeAxis(chromInfoFile) {
                 let gSelect = null;
                 let xScale = d3.scale.linear().domain(domain).range([0,width]);
 
-                let cumValues = d.cumPositions;
                 let xAxis = null;
                 let gAxis = null;
                 let lineScale = null;
@@ -76,9 +74,6 @@ export function ChromosomeAxis(chromInfoFile) {
                 }
                 
 
-                if (cumValues == null)
-                    return;
-
                 localZoomDispatch.on('zoom.' + slugId, zoomChanged);
 
                 function zoomChanged(translate, scale) {
@@ -88,7 +83,6 @@ export function ChromosomeAxis(chromInfoFile) {
 
                     draw();
                 }
-                           console.log('cumValues:', cumValues);
 
                    function draw () {
                        //gChromLabels.attr('x', (d) => { return xScale(d.pos); });
@@ -107,15 +101,7 @@ export function ChromosomeAxis(chromInfoFile) {
                        let tickHeight = 4;
                        let tickFormat = d3.format(",d")
 
-                       let bsCenter = bisect(cumValues, midDomain);
-
-                       if (bsCenter == 0)
-                           bsCenter += 1;
-                       if (bsCenter == cumValues.length)
-                           bsCenter -= 1;
-
-                       let chrCenter = cumValues[bsCenter-1].chr
-                        let centerInChrPos = Math.floor(midDomain - cumValues[bsCenter - 1].pos);
+                        let [chrCenter, centerInChrPos] = d.genomePosToChrPos(midDomain);
 
                         textCenterChr.text(chrCenter + ":" + tickFormat(centerInChrPos))
 
