@@ -993,13 +993,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
 	exports.ChromosomeAxis = ChromosomeAxis;
 
 	__webpack_require__(12);
 
-	var _d = __webpack_require__(14);
+	var _d2 = __webpack_require__(14);
 
-	var _d2 = _interopRequireDefault(_d);
+	var _d3 = _interopRequireDefault(_d2);
 
 	var _slugid = __webpack_require__(15);
 
@@ -1008,9 +1011,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function ChromosomeAxis(chromInfoFile) {
-	    var bisect = _d2.default.bisector(function (d) {
-	        return d.pos;
-	    }).left;
 	    var width = 600;
 	    var zoomDispatch = null;
 	    var domain = [0, 1];
@@ -1018,19 +1018,18 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    function chart(selection) {
 	        selection.each(function (d) {
-	            var localZoomDispatch = zoomDispatch == null ? _d2.default.dispatch('zoom') : zoomDispatch;
+	            var localZoomDispatch = zoomDispatch == null ? _d3.default.dispatch('zoom') : zoomDispatch;
 	            var gChromLabels = null;
 	            var gSelect = null;
-	            var xScale = _d2.default.scale.linear().domain(domain).range([0, width]);
+	            var xScale = _d3.default.scale.linear().domain(domain).range([0, width]);
 
-	            var cumValues = d.cumPositions;
 	            var xAxis = null;
 	            var gAxis = null;
 	            var lineScale = null;
 	            var slugId = _slugid2.default.nice();
-	            var zoom = _d2.default.behavior.zoom().x(xScale);
+	            var zoom = _d3.default.behavior.zoom().x(xScale);
 
-	            gSelect = _d2.default.select(this);
+	            gSelect = _d3.default.select(this);
 
 	            var gAxisData = gSelect.selectAll('g').data([0]);
 
@@ -1059,8 +1058,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                // FIXME
 	            }
 
-	            if (cumValues == null) return;
-
 	            localZoomDispatch.on('zoom.' + slugId, zoomChanged);
 
 	            function zoomChanged(translate, scale) {
@@ -1070,7 +1067,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	                draw();
 	            }
-	            console.log('cumValues:', cumValues);
 
 	            function draw() {
 	                //gChromLabels.attr('x', (d) => { return xScale(d.pos); });
@@ -1086,15 +1082,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	                var scaleMid = xScale.range()[1] - tickWidth / 2; //(xScale.range()[1] - xScale.range()[0]) / 2
 
 	                var tickHeight = 4;
-	                var tickFormat = _d2.default.format(",d");
+	                var tickFormat = _d3.default.format(",d");
 
-	                var bsCenter = bisect(cumValues, midDomain);
+	                var _d$genomePosToChrPos = d.genomePosToChrPos(midDomain);
 
-	                if (bsCenter == 0) bsCenter += 1;
-	                if (bsCenter == cumValues.length) bsCenter -= 1;
+	                var _d$genomePosToChrPos2 = _slicedToArray(_d$genomePosToChrPos, 2);
 
-	                var chrCenter = cumValues[bsCenter - 1].chr;
-	                var centerInChrPos = Math.floor(midDomain - cumValues[bsCenter - 1].pos);
+	                var chrCenter = _d$genomePosToChrPos2[0];
+	                var centerInChrPos = _d$genomePosToChrPos2[1];
+
 
 	                textCenterChr.text(chrCenter + ":" + tickFormat(centerInChrPos));
 
@@ -12920,6 +12916,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var chromInfo = { 'cumPositions': cumValues,
 	            'chrPositions': chrPositions,
 	            'totalLength': totalLength };
+
+	        chromInfo.genomePosToChrPos = function (genomePos) {
+	            // Convert a genome position (e.g. 762323234) to a chromosome position (e.g. ['chr5', 12345])
+	            var bisect = _d2.default.bisector(function (d) {
+	                return d.pos;
+	            }).left;
+	            var bsCenter = bisect(cumValues, genomePos);
+
+	            if (bsCenter == 0) bsCenter += 1;
+	            if (bsCenter == cumValues.length) bsCenter -= 1;
+
+	            var chrCenter = cumValues[bsCenter - 1].chr;
+	            var centerInChrPos = Math.floor(genomePos - cumValues[bsCenter - 1].pos);
+
+	            return [chrCenter, centerInChrPos];
+	        };
 
 	        success(chromInfo);
 	    });
