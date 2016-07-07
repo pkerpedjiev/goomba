@@ -231,7 +231,7 @@ export function TiledArea() {
 
                     // this will become the tiling code
                     let zoomScale = Math.max((maxX - minX) / (xScale.domain()[1] - xScale.domain()[0]), 1);
-                    let zoomLevel = Math.round(Math.log(zoomScale) / Math.LN2) + 1;
+                    let zoomLevel = Math.round(Math.log(zoomScale) / Math.LN2) + 0;
 
                     if (zoomLevel > maxZoom)
                         zoomLevel = maxZoom;

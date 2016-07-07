@@ -13180,7 +13180,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	                // this will become the tiling code
 	                var zoomScale = Math.max((maxX - minX) / (xScale.domain()[1] - xScale.domain()[0]), 1);
-	                var zoomLevel = Math.round(Math.log(zoomScale) / Math.LN2) + 1;
+	                var zoomLevel = Math.round(Math.log(zoomScale) / Math.LN2) + 0;
 
 	                if (zoomLevel > maxZoom) zoomLevel = maxZoom;
 
