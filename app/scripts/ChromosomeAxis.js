@@ -96,7 +96,7 @@ export function ChromosomeAxis(chromInfoFile) {
                        let midDomain = (xScale.domain()[1] + xScale.domain()[0]) / 2;
                        let midRange = (xScale.range()[0] + xScale.range()[1]) / 2;
 
-                       let scaleMid = xScale.range()[1] - tickWidth / 2; //(xScale.range()[1] - xScale.range()[0]) / 2
+                       let scaleMid = xScale.range()[0] + tickWidth / 2; //(xScale.range()[1] - xScale.range()[0]) / 2
 
                        let tickHeight = 4;
                        let tickFormat = d3.format(",d")
@@ -124,8 +124,8 @@ export function ChromosomeAxis(chromInfoFile) {
 
                         }
 
-                       textScale.attr('x', xScale.range()[1] - 5)
-                        .attr('text-anchor', 'end')
+                       textScale.attr('x', xScale.range()[0] + 5)
+                        .attr('text-anchor', 'start')
                        .text(tickFormat(tickSpan) + " bp");
 
 

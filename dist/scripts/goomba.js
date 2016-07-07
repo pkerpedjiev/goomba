@@ -1079,7 +1079,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                var midDomain = (xScale.domain()[1] + xScale.domain()[0]) / 2;
 	                var midRange = (xScale.range()[0] + xScale.range()[1]) / 2;
 
-	                var scaleMid = xScale.range()[1] - tickWidth / 2; //(xScale.range()[1] - xScale.range()[0]) / 2
+	                var scaleMid = xScale.range()[0] + tickWidth / 2; //(xScale.range()[1] - xScale.range()[0]) / 2
 
 	                var tickHeight = 4;
 	                var tickFormat = _d3.default.format(",d");
@@ -1105,7 +1105,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    pathScale.attr('d', 'M' + (scaleMid - tickWidth / 2) + ',' + tickHeight + ('L' + (scaleMid - tickWidth / 2) + ', 0') + ('L' + (scaleMid + tickWidth / 2) + ', 0') + ('L' + (scaleMid + tickWidth / 2) + ',' + tickHeight));
 	                }
 
-	                textScale.attr('x', xScale.range()[1] - 5).attr('text-anchor', 'end').text(tickFormat(tickSpan) + " bp");
+	                textScale.attr('x', xScale.range()[0] + 5).attr('text-anchor', 'start').text(tickFormat(tickSpan) + " bp");
 
 	                centerTick.attr('x1', midRange).attr('x2', midRange).attr('y1', 0).attr('y2', tickHeight);
 
