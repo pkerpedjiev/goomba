@@ -37,6 +37,7 @@ export function TiledArea() {
     }
 
     function chart(selection) {
+        console.log('version 0.11');
         selection.each(function(tileDirectory) {
             let xScaleDomain = null, yScaleDomain = null;
             let loadedTiles = {};
@@ -83,14 +84,14 @@ export function TiledArea() {
                 .attr('pointer-events', 'all')
 
                 gMain.append("clipPath")
-                .attr("id", "clip")
+                .attr("id", "clip-" + slugId)
                 .append("rect")
                 .attr("x", 0)
                 .attr("y", -margin.top)
                 .attr("width", width - margin.left - margin.right)
                 .attr("height", height);
 
-                gMain.style('clip-path', 'url(#clip)')
+                gMain.style('clip-path', 'url(#clip-' + slugId + ')')
 
                 gMain.call(zoom);
 
