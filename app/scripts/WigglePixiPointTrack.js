@@ -2,7 +2,7 @@ import PIXI from 'pixi.js';
 import slugid from 'slugid';
 import d3 from 'd3';
 
-export function WigglePixiTrack() {
+export function WigglePixiPointTrack() {
     let width = 200;
     let height = 15;
     let resizeDispatch = null;
@@ -92,9 +92,9 @@ export function WigglePixiTrack() {
                     .range([tile.xRange[0] + tile.tilePos[1] * tileWidth, 
                            tile.xRange[0] + (tile.tilePos[1] + 1) * tileWidth]  );
 
-                    graphics.lineStyle(0, 0x0000FF, 1);
+                    graphics.lineStyle(0.1, 0x0000FF, 1);
                     
-                    graphics.beginFill(0xFF700B, 1);
+                   // graphics.beginFill(0xe74c3c);
               
                     for (let i = 0; i < tileData.length; i++) {
                         let xPos = xScale(tileXScale(i));
@@ -103,10 +103,9 @@ export function WigglePixiTrack() {
                         let height = yScale(tileData[i])
                         let width = xScale(tileXScale(i+1)) - xScale(tileXScale(i));
 
-                        if (height > 0 && width > 0) {
-
-                            graphics.drawRect(xPos, yPos, width, height);
-                        }
+                       // if (height > 0 && width > 0) {
+                            graphics.drawCircle(xPos, 1-height, 0.1);
+                        //}
                     }
                 }
 
@@ -148,7 +147,7 @@ export function WigglePixiTrack() {
 
             function sizeChanged() {
                 d.pMain.position.y = d.top;
-                d.pMain.scale.y = -d.height;
+                d.pMain.scale.y = d.height;
             }
 
             function zoomChanged(translate, scale) {

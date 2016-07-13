@@ -36,19 +36,22 @@ export function WiggleTileLayout(tile_info) {
             let yScale = d3.scale.linear().domain([0, maxVisibleValue])
             .range([0, height])
 
+           
             let tileData = loadTileData(tile.data);
-
+            
             let gDataPoints = d3.select(this).selectAll('.data-g')
                 .data(tileData)
 
                 //console.log('tile.data:', tile.data);
+            
 
                 gDataPoints.enter()
+                
                 .append('rect')
                 .classed('data-g', true)
 
                 gDataPoints.exit()
-                .remove()
+                .remove();
 
                 let tileWidth = (tile.xRange[1] - tile.xRange[0]) / Math.pow(2, tile.tilePos[0]);
 
@@ -67,9 +70,10 @@ export function WiggleTileLayout(tile_info) {
                 .attr('y', function(d,i) {
                     let toScale = d / Math.pow(2, tile.maxZoom - tile.tilePos[0])
 
-                    return height - yScale(d);
+                    return height -yScale(d);
 
                 })
+                
                 .attr('height', function(d, i) {
                     let toScale = d / Math.pow(2, tile.maxZoom - tile.tilePos[0])
 

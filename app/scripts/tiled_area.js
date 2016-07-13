@@ -69,13 +69,17 @@ export function TiledArea() {
             .attr("transform", "translate(" + (width - margin.right) + "," + margin.top + ")");
 
             let gXAxis = gEnter.append("g")
-                .attr("class", "y axis")
+                .attr("class", "x axis")
                 .attr("transform", "translate(" + (margin.left) + "," + (height - margin.bottom) + ")");
 
             let gMain = gEnter.append('g')
                 .classed('main-g', true)
                 .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-
+            
+            /*gMain.insert("path")
+                  //.datum(data)
+                  .attr("class", "line");
+                  //.attr("d", line);*/
                 gMain.insert("rect", "g")
                 .attr("class", "pane")
                 .attr("width", width)

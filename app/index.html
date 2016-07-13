@@ -11,7 +11,11 @@
 <!-- endbuild -->
 
 <div id="circle"></div>
-
+<div style="position:relative; padding-left: 25px; padding-top: 14px;  " id="mode">
+        <input type="radio" name="toggle" value="bar" checked >Bar
+        <input type="radio" name="toggle" value="line" style="margin-left: 60px">Line
+        <input type="radio" name="toggle" value="point" style="margin-left: 60px">Point
+</div>
 <script type='text/javascript'>
 
 let width = 448;
@@ -33,8 +37,8 @@ var bigDiv = d3.select('#circle').append('div')
 .classed('big-div', true)
 .style('width', width)
 .style('height', height)
-.style('top', '0px')
-.style('left', '0px')
+.style('top', '74px')
+.style('left', '34px')
 .style('position', 'absolute')
 
 var bigCanvas = bigDiv.append('canvas')
@@ -82,7 +86,17 @@ var draggableTrack = goomba.DraggableTrack()
     .width(width)
     .height(trackHeight);
 
+var wigglePixiLineTrack = goomba.WigglePixiLineTrack()
+    .xScale(xScale.copy())
+    .pixiStage(stage)
+    .zoomDispatch(zoomDispatch);
+
 var wigglePixiTrack = goomba.WigglePixiTrack()
+    .xScale(xScale.copy())
+    .pixiStage(stage)
+    .zoomDispatch(zoomDispatch);
+
+var wigglePixiPointTrack = goomba.WigglePixiPointTrack()
     .xScale(xScale.copy())
     .pixiStage(stage)
     .zoomDispatch(zoomDispatch);
@@ -92,30 +106,98 @@ trackData = [
         {'width': width, 'height': 50, 
         'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
 
-       /*  
-        {'width': width, 'height': 60, 
-        'source': awsDomain + '/tiles_test/E116-DNase.fc.signal.bigwig.bedGraph.genome.sorted.short.gz'},
-        */
+         
+        /*{'width': width, 'height': 60, 
+        'source': awsDomain + '/tiles_test/E116-DNase.fc.signal.bigwig.bedGraph.genome.sorted.short.gz'},*/
+        
 ];
 
-let tracks = d3.select('.big-div')
-.selectAll('.track')
-.data(trackData)
-.enter()
-.append('div')
-.style('opacity', 0.5)
-.classed('track', true)
-.call(draggableTrack)
 
+let tracks = d3.select('.big-div')
+        .selectAll('.track')
+        .data(trackData)
+        .enter()
+        .append('div')
+        .style('opacity', 0.5)
+        .classed('track', true)
+        .call(draggableTrack);
+//bar initially
+var tiledArea = goomba.GenericTiledArea()
+        .tileType('div')
+        .width(width)
+        //.domain(xScale.domain())
+        .zoomDispatch(zoomDispatch)
+        .tilesChanged(function() {
+            tracks.call(wigglePixiTrack);
+        });
+
+d3.selectAll("#mode input[name=toggle]").on("change", function() {
+    d3.selectAll(".track").remove();
+    tracks = d3.select('.big-div')
+        .selectAll('.track')
+        .data(trackData)
+        .enter()
+        .append('div')
+        .style('opacity', 0.5)
+        .classed('track', true)
+        .call(draggableTrack);
+    if(this.value == "line") {
+
+        tiledArea = goomba.GenericTiledArea()
+        .tileType('div')
+        .width(width)
+        //.domain(xScale.domain())
+        .zoomDispatch(zoomDispatch)
+        .tilesChanged(function() {
+            tracks.call(wigglePixiLineTrack);
+         });
+    } else if(this.value == "bar"){
+        tiledArea = goomba.GenericTiledArea()
+        .tileType('div')
+        .width(width)
+        //.domain(xScale.domain())
+        .zoomDispatch(zoomDispatch)
+        .tilesChanged(function() {
+            tracks.call(wigglePixiTrack);
+         });
+    } else if(this.value == "point"){
+        tiledArea = goomba.GenericTiledArea()
+        .tileType('div')
+        .width(width)
+        //.domain(xScale.domain())
+        .zoomDispatch(zoomDispatch)
+        .tilesChanged(function() {
+            tracks.call(wigglePixiPointTrack);
+         });
+    }
+
+    console.log("calling change");
+     tracks.call(tiledArea);
+});
+/*
+showLine = 1; 
+if(showLine == 1) { //show line
+    var tiledArea = goomba.GenericTiledArea()
+    .tileType('div')
+    .width(width)
+    //.domain(xScale.domain())
+    .zoomDispatch(zoomDispatch)
+    .tilesChanged(function() {
+        tracks.call(wigglePixiLineTrack);
+         });
+} else { //show bins
 var tiledArea = goomba.GenericTiledArea()
     .tileType('div')
     .width(width)
     //.domain(xScale.domain())
     .zoomDispatch(zoomDispatch)
     .tilesChanged(function() {
-        tracks.call(wigglePixiTrack) });
+        tracks.call(wigglePixiTrack);
+         });
+}
+*/
+tracks.call(tiledArea);
 
-tracks.call(tiledArea)
 
 animate();
 
@@ -138,7 +220,7 @@ function animate() {
     requestAnimationFrame( animate );
 }
 
-    /*
+  /*  
 goomba.ChromosomeInfo(chromInfoFilename, (chromInfo) => {
     let xScale = d3.scale.linear().domain([0, chromInfo.totalLength])
     //let xScale = d3.scale.linear().domain([0, 10000000])
@@ -159,10 +241,6 @@ goomba.ChromosomeInfo(chromInfoFilename, (chromInfo) => {
     .orient('top')
     .zoomDispatch(zoomDispatch);
 
-    svg.append('g')
-    .attr('transform', 'translate(' + margin.left + ',20)')
-    .datum(chromInfo)
-    .call(chromInfoPlot);
 
     let tileLayout = goomba.GeneTileLayout;
 
@@ -170,6 +248,7 @@ goomba.ChromosomeInfo(chromInfoFilename, (chromInfo) => {
     .classed('g-main', true);
 
     /////////////////////////////
+    
 
     let wiggleTileArea = goomba.TiledArea().width(width)
     .height(height)
