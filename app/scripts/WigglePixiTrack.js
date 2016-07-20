@@ -102,7 +102,7 @@ export function WigglePixiTrack() {
                         let width = xScale(tileXScale(i+1)) - xScale(tileXScale(i));
 
                         if (height > 0 && width > 0) {
-                            graphics.drawRect(xPos, yPos, width, height);
+                            graphics.drawRect(xPos, 50-50*height, width, 50*height);
                         }
                     }
                 }
@@ -145,7 +145,7 @@ export function WigglePixiTrack() {
 
             function sizeChanged() {
                 d.pMain.position.y = d.top;
-                d.pMain.scale.y = -d.height;
+                //d.pMain.scale.y = d.height;
             }
 
             function zoomChanged(translate, scale) {

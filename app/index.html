@@ -13,22 +13,20 @@
 
 <!-- build:js scripts/goomba.js -->
 <script src='scripts/goomba.js'></script>
-<!-- endbuild 
 
 <div style="position:relative; padding-left: 25px; padding-top: 14px;  " id="mode">
         <input type="radio" name="type" value="line" checked >Line
-        <input type="radio" name="type" value="column" style="margin-left: 20px">Bar
-        <input type="radio" name="type" value="scatter" style="margin-left: 20px">Point
+        <input type="radio" name="type" value="bar" style="margin-left: 20px">Bar
+        <input type="radio" name="type" value="point" style="margin-left: 20px">Point
         <input type="radio" name="type" value="heatmap" style="margin-left: 20px">Heatmap
-</div>-->
-<canvas id="demoCanvas" width="440" height="300" style="margin-top:60px"></canvas>
+</div>
+
 <!--<div id="chartContainer" style="height: 90px; width: 430px; margin-top: 114px"></div>-->
 <div id="circle">
 </div>
 
 <!-- canvas js -->
 
-<div id="chartContainer" style="height: 90px; width: 460px; margin-top: 114px; margin-left:-20px;"></div>
 <script src="http://canvasjs.com/assets/script/canvasjs.min.js"></script>
 
 <!-- Easel JS trial-->
@@ -41,7 +39,7 @@
 
 
 let width = 1000;//448
-let height = 440;//440
+let height = 1000;//440
 
 let trackHeight = 30;
 let margin = {'left': 30, 'top': 10, 'right': 30, 'bottom': 10};
@@ -70,9 +68,9 @@ var bigCanvas = bigDiv.append('canvas')
 .style('left', '0px')
 .style('pointer-events', 'none');
 
-var pixiRenderer = PIXI.autoDetectRenderer(width, height, { antialiased: true,
+var pixiRenderer = PIXI.autoDetectRenderer(width, height, { antialias: true,
                                                             view: bigCanvas.node(),
-                                                            'transparent': true});
+                                                            'transparent': true});//antialiased: true
 var stage = new PIXI.Container();
 stage.interactive = true;
 
@@ -121,20 +119,127 @@ var draggableTrack = goomba.DraggableTrack()
 var wigglePixiTrack = goomba.WiggleCanvasTrack2()
     .xScale(xScale.copy())
     .pixiStage(stage)
-    .zoomDispatch(zoomDispatch);*/
+    .zoomDispatch(zoomDispatch);*/ 
 
-    var stageE = new createjs.Stage("demoCanvas");
 var wigglePixiTrack = goomba.WigglePixiLine()
     .xScale(xScale.copy())
     .pixiStage(stage)
     .zoomDispatch(zoomDispatch);
 
 trackData = [
-        {'width': width, 'height': 50, 
+        {'width': width, 'height': 10, 
         'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
-       // {'width': width, 'height': 50, 
-       // 'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+       {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
         
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+
+       /* {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+
+        /*{'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+        {'width': width, 'height': 10, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},*/
        // {'width': width, 'height': 60, 
         //'source': awsDomain + '/tiles_test/E116-DNase.fc.signal.bigwig.bedGraph.genome.sorted.short.gz'},
         
@@ -184,25 +289,6 @@ function animate() {
 
 
 
-/** Easel test */
-function easel(){
-
-    var g = new createjs.Graphics();
-     g.setStrokeStyle(1);
-     g.beginStroke("#000000");
-     g.beginFill("red");
-     g.drawCircle(0,0,30);
-    // stageE.addChild(g);
-    var x = new createjs.Container();
-    stageE.addChild(x);
-    stageE.update();
-  /*  var circle = new createjs.Shape();
-    circle.graphics.beginFill("DeepSkyBlue").drawCircle(0, 0, 50);
-    circle.x = 100;
-    circle.y = 100;
-    stageE.addChild(circle);
-    stageE.update();*/
-}
 
 
  /*   
