@@ -13,18 +13,19 @@
 
 <!-- build:js scripts/goomba.js -->
 <script src='scripts/goomba.js'></script>
-
+<form>
 <div style="position:relative; padding-left: 25px; padding-top: 14px;  " id="mode">
         <input type="radio" name="type" value="line" checked >Line
         <input type="radio" name="type" value="bar" style="margin-left: 20px">Bar
         <input type="radio" name="type" value="point" style="margin-left: 20px">Point
         <input type="radio" name="type" value="heatmap" style="margin-left: 20px">Heatmap
 </div>
-
+</form>
 <!--<div id="chartContainer" style="height: 90px; width: 430px; margin-top: 114px"></div>-->
 <div id="circle">
 </div>
-
+<div id="svg" style="margin-left:1100px;">
+</div>
 <!-- canvas js -->
 
 <script src="http://canvasjs.com/assets/script/canvasjs.min.js"></script>
@@ -53,6 +54,8 @@ let tileDirectories = [awsDomain + '/hg19/refgene-tiles-minus',
 
 var chromInfoFilename = 'https://s3.amazonaws.com/pkerp/data/hg19/chromInfo.txt';
 
+
+//var svg = d3.select("#svg").append('svg');
 
 var bigDiv = d3.select('#circle').append('div')
 .classed('big-div', true)
@@ -112,14 +115,7 @@ var draggableTrack = goomba.DraggableTrack()
     .width(width)
     .height(trackHeight);
 
-/*var wigglePixiTrack = goomba.WigglePixiTrack()
-    .xScale(xScale.copy())
-    .pixiStage(stage)
-    .zoomDispatch(zoomDispatch);
-var wigglePixiTrack = goomba.WiggleCanvasTrack2()
-    .xScale(xScale.copy())
-    .pixiStage(stage)
-    .zoomDispatch(zoomDispatch);*/ 
+
 
 var wigglePixiTrack = goomba.WigglePixiLine()
     .xScale(xScale.copy())
@@ -127,7 +123,7 @@ var wigglePixiTrack = goomba.WigglePixiLine()
     .zoomDispatch(zoomDispatch);
 
 trackData = [
-        {'width': width, 'height': 10, 
+        {'width': width, 'height': 50, 
         'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
        {'width': width, 'height': 10, 
         'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
@@ -156,12 +152,12 @@ trackData = [
         {'width': width, 'height': 10, 
         'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
 
-       /* {'width': width, 'height': 10, 
+        {'width': width, 'height': 10, 
         'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
         {'width': width, 'height': 10, 
         'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
 
-        {'width': width, 'height': 10, 
+       /* {'width': width, 'height': 10, 
         'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
         {'width': width, 'height': 10, 
         'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
@@ -240,8 +236,8 @@ trackData = [
         'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
         {'width': width, 'height': 10, 
         'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},*/
-       // {'width': width, 'height': 60, 
-        //'source': awsDomain + '/tiles_test/E116-DNase.fc.signal.bigwig.bedGraph.genome.sorted.short.gz'},
+        {'width': width, 'height': 60, 
+        'source': awsDomain + '/tiles_test/E116-DNase.fc.signal.bigwig.bedGraph.genome.sorted.short.gz'},
         
 ];
 
@@ -339,7 +335,22 @@ goomba.ChromosomeInfo(chromInfoFilename, (chromInfo) => {
     //.data(['//search-es4dn-z7rzz4kevtoyh5pfjkmjg5jsga.us-east-1.es.amazonaws.com/hg19/wgEncodeSydhTfbsGm12878InputStdSig.bigWig.bedGraph.genome.sorted.gz'])
 
     .data([
-        awsDomain + '/hg19/E116-DNase.fc.signal.bigwig.bedGraph.genome.sorted.gz'
+        awsDomain + '/hg19/E116-DNase.fc.signal.bigwig.bedGraph.genome.sorted.gz',
+        awsDomain + '/hg19/E116-DNase.fc.signal.bigwig.bedGraph.genome.sorted.gz',
+      /*  awsDomain + '/hg19/E116-DNase.fc.signal.bigwig.bedGraph.genome.sorted.gz',
+        awsDomain + '/hg19/E116-DNase.fc.signal.bigwig.bedGraph.genome.sorted.gz',
+
+        awsDomain + '/hg19/E116-DNase.fc.signal.bigwig.bedGraph.genome.sorted.gz',
+        awsDomain + '/hg19/E116-DNase.fc.signal.bigwig.bedGraph.genome.sorted.gz',
+
+        awsDomain + '/hg19/E116-DNase.fc.signal.bigwig.bedGraph.genome.sorted.gz',
+        awsDomain + '/hg19/E116-DNase.fc.signal.bigwig.bedGraph.genome.sorted.gz',
+
+        awsDomain + '/hg19/E116-DNase.fc.signal.bigwig.bedGraph.genome.sorted.gz',
+        awsDomain + '/hg19/E116-DNase.fc.signal.bigwig.bedGraph.genome.sorted.gz',
+
+        awsDomain + '/hg19/E116-DNase.fc.signal.bigwig.bedGraph.genome.sorted.gz',
+        awsDomain + '/hg19/E116-DNase.fc.signal.bigwig.bedGraph.genome.sorted.gz' 
     ])
 
     .enter()
@@ -347,8 +358,8 @@ goomba.ChromosomeInfo(chromInfoFilename, (chromInfo) => {
     .attr('transform', (d,i) => { return 'translate(0,' + (i * trackHeight + margin.top) + ')'; })
     .classed('track-g', true)
     .call(wiggleTileArea)
-});
-*/
+});*/
+
 </script>
 </body>
 </html>

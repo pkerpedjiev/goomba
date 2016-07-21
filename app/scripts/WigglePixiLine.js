@@ -14,6 +14,7 @@ export function WigglePixiLine() {
     var xPoints;
     var yPoints;
     var tileIDs;
+    
     var trackH = 50;
     var shownT = {};
 
@@ -72,6 +73,14 @@ export function WigglePixiLine() {
                 d.preScale = 1; 
             }
 
+            if (!('preHeight' in d)) {
+                d.preHeight = d.height; 
+            }
+
+            if (!('redrawn' in d)) {
+                d.redrawn = false; 
+            }
+
             if (!('pMain' in d)) {
 
                 let pMain = new PIXI.Graphics();
@@ -84,9 +93,15 @@ export function WigglePixiLine() {
             if (!('chartType' in d)) {
                 d.chartType = "line";
             }
-            
 
-                
+    
+            if (!('xPoints' in d)) {
+                d.xPoints = [];
+            }            
+
+            if (!('yPoints' in d)) {
+                d.yPoints = [];
+            }                  
 
             function redrawTile() {
                 let tileData = d3.select(this).selectAll('.tile-g').data();
@@ -100,8 +115,8 @@ export function WigglePixiLine() {
 
                 
                 let reset = function(){
-                    xPoints = [];
-                    yPoints = [];
+                    d.xPoints = [];
+                    d.yPoints = [];
                     tileIDs = [];
                 }
                 
@@ -132,11 +147,6 @@ export function WigglePixiLine() {
                             .range(["red","blue"]);
                     }
                     
-                    
-                   
-                    /** if rect */
-                    //graphics.lineStyle(0, 0x0000FF, 1);
-                   // graphics.beginFill(0xFF700B, 1);
                     let j = 0;
 
                     for (let i = 0; i < tileData.length; i++) {
@@ -177,16 +187,9 @@ export function WigglePixiLine() {
                             //}
                             
                         } 
-                       // if (height > 0 && width > 0) {
-                         //   graphics.drawRect(xPos, yPos, width, height);
-                       // }
-                       /** if circle */
-                     //  
 
-                       xPoints.push(xPos);
-                       //yPoints.push(50 - 50*height);
-                      // yPoints.push(d.height - d.height*height);
-                       yPoints.push(height);
+                       d.xPoints.push(xPos);
+                       d.yPoints.push(height);
 
                        /** if line */
                        
@@ -247,21 +250,30 @@ export function WigglePixiLine() {
             localZoomDispatch.on('zoom.' + slugId, zoomChanged);
 
             function sizeChanged() {
+                console.log("size changed called");
                 d.pMain.position.y = d.top;
-                redraw();
+                //redraw();
                 
+                if(d.preHeight != d.height){
+                    redraw("size changed");
+                }
+
+                d.preHeight = d.height;
             }
 
             $("#mode input[name=type]").change(function () { 
     
                 var selectedChartType = $("#mode input[name=type]:checked").val();
                 d.chartType = selectedChartType;
-                redraw();
+
+                
+                redraw("changed mode");
                // zoomChanged(d.translate, d.scale, d.chartType);
                 
             });
 
-            function redraw(){
+            function redraw(apple){
+                console.log("im being called" + apple);
                 d.pMain.clear();
                 d.pMain.position.x = d.translate[0];
                 for (let tileIdStr in d.tileGraphics) {
@@ -296,33 +308,33 @@ export function WigglePixiLine() {
 
                 let j = 0;
                     //console.log("xpoints" +xPoints.length);
-                let width = Math.round(xPoints[1]*d.scale-xPoints[0]*d.scale);
+                let width = Math.round(d.xPoints[1]*d.scale-d.xPoints[0]*d.scale);
 
-                for(let i = 0; i < xPoints.length-1; i++){
+                for(let i = 0; i < d.xPoints.length-1; i++){
                     d.pMain.scale.x = 1;
                     if (d.chartType == "line"){
-                        if(Math.abs(Math.round(xPoints[i+1]*d.scale-xPoints[i]*d.scale) - width) > 3) { 
+                        if(Math.abs(Math.round(d.xPoints[i+1]*d.scale-d.xPoints[i]*d.scale) - width) > 3) { 
                             graphics.lineStyle(0, 0xFF0000, 1);
                         } else {
                             graphics.lineStyle(1, 0x0000FF, 1);       
                         }
                         if(j == 0){
-                            graphics.moveTo(xPoints[i]*d.scale, d.height-yPoints[i]*d.height);
+                            graphics.moveTo(d.xPoints[i]*d.scale, d.height-d.yPoints[i]*d.height);
                             j++;
                         }
 
-                        graphics.lineTo(xPoints[i+1]*d.scale, d.height-yPoints[i+1]*d.height);
+                        graphics.lineTo(d.xPoints[i+1]*d.scale, d.height-d.yPoints[i+1]*d.height);
                     } else if (d.chartType == "point"){
-                        graphics.drawCircle(xPoints[i]*d.scale, d.height-yPoints[i]*d.height, 1);
+                        graphics.drawCircle(d.xPoints[i]*d.scale, d.height-d.yPoints[i]*d.height, 1);
                            
                     } else if(d.chartType == "bar"){
                         graphics.beginFill(0xFF700B, 1);
-                        graphics.drawRect(xPoints[i], d.height-yPoints[i]*d.height, xPoints[i+1]-xPoints[i], d.height*yPoints[i]);
+                        graphics.drawRect(d.xPoints[i], d.height-d.yPoints[i]*d.height, d.xPoints[i+1]-d.xPoints[i], d.height*d.yPoints[i]);
                         graphics.endFill();
 
                     } else if(d.chartType == "heatmap"){
-                        graphics.beginFill(color(yPoints[i]).replace("#","0x"), 1);
-                        graphics.drawRect(xPoints[i], 0, xPoints[i+1]-xPoints[i], d.height);
+                        graphics.beginFill(color(d.yPoints[i]).replace("#","0x"), 1);
+                        graphics.drawRect(d.xPoints[i], 0, d.xPoints[i+1]-d.xPoints[i], d.height);
                         graphics.endFill();
                        
                         
@@ -351,12 +363,12 @@ export function WigglePixiLine() {
                 d.scale = scale;
                 
 
-
+               // console.log(d.translate[0]);
                 d.pMain.position.x = d.translate[0];
 
-                if(d.chartType == "bar"|| d.chartType == "heatmap"){
+                if(d.chartType == "bar" || d.chartType == "heatmap"){
                     d.pMain.scale.x = scale;
-                    sizeChanged();
+                  //  sizeChanged();
                     return;
                 }
                 
@@ -370,10 +382,8 @@ export function WigglePixiLine() {
                     divider = 1/100;
                 }
 
-                if(Math.round(d.preScale*divider) != Math.round(scale*divider)&& scale < 100000){
-                //if()
-               // console.log("im redrawing")
-                 //   d.pMain.scale.x = 1;
+                if(Math.round(d.preScale*divider) != Math.round(scale*divider)){
+                    d.pMain.scale.x = 1;
                     for (let tileIdStr in d.tileGraphics) {
                         if ((tileIdStr in shownT)) {
                             //we're displaying graphics that are no longer necessary,
@@ -389,27 +399,33 @@ export function WigglePixiLine() {
                     graphics.lineStyle(1, 0x0000FF, 1);
                     let j = 0;
                     //console.log("xpoints" +xPoints.length);
-                    let width = Math.round(xPoints[1]*scale-xPoints[0]*scale);
+                    let width = Math.round(d.xPoints[1]*scale-d.xPoints[0]*scale);
 
-                    for(let i = 0; i < xPoints.length-1; i++){
+                    for(let i = 0; i < d.xPoints.length-1; i++){
  
 
                         if (d.chartType == "line"){
-                            if(Math.abs(Math.round(xPoints[i+1]*scale-xPoints[i]*scale) - width) > 3) { 
+                            if(Math.abs(Math.round(d.xPoints[i+1]*scale-d.xPoints[i]*scale) - width) > 3) { 
                                 graphics.lineStyle(0, 0xFF0000, 1);
                             } else {
                                 graphics.lineStyle(1, 0x0000FF, 1);       
                             }
                             if(j == 0){
-                                graphics.moveTo(xPoints[i]*scale, d.height-yPoints[i]*d.height);
+                                graphics.moveTo(d.xPoints[i]*scale, d.height-d.yPoints[i]*d.height);
                                 j++;
                             }
+                                graphics.lineTo(d.xPoints[i+1]*scale, d.height-d.yPoints[i+1]*d.height);
                             
-                            graphics.lineTo(xPoints[i+1]*scale, d.height-yPoints[i+1]*d.height);
-                          //  if(yPoints[i+1] != 50 || yPoints[i+1] != 0)
-                            //console.log("("+(xPoints[i+1]*scale)+", "+yPoints[i+1]+")");
                         } else {
-                            graphics.drawCircle(xPoints[i]*scale, d.height-yPoints[i]*d.height, 1);
+                            
+                                graphics.drawCircle(d.xPoints[i]*scale, d.height-d.yPoints[i]*d.height, 1);
+                         //   if(xPoints[i]*scale > (-translate[0])){
+                               // graphics.visible = true;
+                           // } else{
+                      //          console.log("not drawing a circle");
+                                //graphics.visible = false;
+                            // }
+                            
                                
                         }
                         
@@ -425,17 +441,17 @@ export function WigglePixiLine() {
                     d.tileGraphics[1000] = graphics;
                   //  console.log("added a child")
                 } else{
-                   // d.pMain.scale.x = 1+d.preScale-scale;
+                    d.pMain.scale.x = 1+d.preScale-scale;
                 }                   
 
-                sizeChanged();
+             //   sizeChanged();
                 d.preScale = scale;
             }
 
             sizeChanged();
         });
     }
-
+ 
     chart.width = function(_) {
         if (!arguments.length) return width;
         else width = _;
