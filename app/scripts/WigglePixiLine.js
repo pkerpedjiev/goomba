@@ -77,9 +77,9 @@ export function WigglePixiLine() {
                 d.preHeight = d.height; 
             }
 
-            if (!('redrawn' in d)) {
-                d.redrawn = false; 
-            }
+            if (!('shownT' in d)) {
+                d.shownT = {}; 
+            }           
 
             if (!('pMain' in d)) {
 
@@ -92,6 +92,20 @@ export function WigglePixiLine() {
 
             if (!('chartType' in d)) {
                 d.chartType = "line";
+            }
+
+             if (!('onchange' in d)) {
+                $("#mode input[name=type]").change(function () { 
+    
+                    var selectedChartType = $("#mode input[name=type]:checked").val();
+                    d.chartType = selectedChartType;
+
+                    
+                    redraw("changed mode");
+                
+                
+                });
+                d.onchange = true;
             }
 
     
@@ -111,6 +125,7 @@ export function WigglePixiLine() {
 
                 let yScale = d3.scale.linear()
                 .domain([0, maxVisibleValue])
+                //.domain([0, maxVisibleValue])
                 .range([0, 1]);
 
                 
@@ -144,7 +159,7 @@ export function WigglePixiLine() {
                     } else if(d.chartType == "heatmap") {
                         color=d3.scale.linear()
                             .domain([0,1])
-                            .range(["red","blue"]);
+                            .range(["white","black"]);
                     }
                     
                     let j = 0;
@@ -204,11 +219,11 @@ export function WigglePixiLine() {
                 
 
                 let shownTiles = {};
-                shownT = {};
+                d.shownT = {};
                 let k = 0;
                 for (let i = 0; i < tileData.length; i++) {
                     shownTiles[tileData[i].tileId] = true;
-                    shownT[tileData[i].tileId] = true;
+                    d.shownT[tileData[i].tileId] = true;
 
                     if (!(tileData[i].tileId in d.tileGraphics)) {
                         // we don't have a graphics object for this tile
@@ -233,6 +248,7 @@ export function WigglePixiLine() {
                         //we're displaying graphics that are no longer necessary,
                         //so we need to get rid of them
                         d.pMain.removeChild(d.tileGraphics[tileIdStr]);
+                        d.tileGraphics[tileIdStr].destroy();
                         delete d.tileGraphics[tileIdStr];
                     }
                 }
@@ -250,42 +266,36 @@ export function WigglePixiLine() {
             localZoomDispatch.on('zoom.' + slugId, zoomChanged);
 
             function sizeChanged() {
-                console.log("size changed called");
                 d.pMain.position.y = d.top;
                 //redraw();
                 
                 if(d.preHeight != d.height){
-                    redraw("size changed");
+                    redraw();
                 }
 
                 d.preHeight = d.height;
             }
 
-            $("#mode input[name=type]").change(function () { 
-    
-                var selectedChartType = $("#mode input[name=type]:checked").val();
-                d.chartType = selectedChartType;
-
-                
-                redraw("changed mode");
-               // zoomChanged(d.translate, d.scale, d.chartType);
-                
-            });
-
-            function redraw(apple){
-                console.log("im being called" + apple);
+            
+            function redraw(){
+                console.log(d.xPoints)
                 d.pMain.clear();
                 d.pMain.position.x = d.translate[0];
                 for (let tileIdStr in d.tileGraphics) {
-                    if ((tileIdStr in shownT)) {
+                    if ((tileIdStr in d.shownT)) {
                         //we're displaying graphics that are no longer necessary,
                         //so we need to get rid of them
                         d.pMain.removeChild(d.tileGraphics[tileIdStr]);
+                        d.tileGraphics[tileIdStr].destroy();
                         delete d.tileGraphics[tileIdStr];
                     }
                 }
                 
                 d.pMain.removeChild(d.tileGraphics[1000]);
+                if(d.tileGraphics[1000] != null){
+                   d.tileGraphics[1000].destroy();
+                }
+                
                 delete d.tileGraphics[1000];
 
                 let graphics = new PIXI.Graphics();
@@ -303,14 +313,16 @@ export function WigglePixiLine() {
                 } else if(d.chartType == "heatmap") {
                      color=d3.scale.linear()
                             .domain([0,1])
-                            .range(["red","blue"]);
+                            .range(["white","black"]);
                 }
+
+                //tile set info
 
                 let j = 0;
                     //console.log("xpoints" +xPoints.length);
                 let width = Math.round(d.xPoints[1]*d.scale-d.xPoints[0]*d.scale);
 
-                for(let i = 0; i < d.xPoints.length-1; i++){
+                for(let i = 0; i < d.xPoints.length; i++){
                     d.pMain.scale.x = 1;
                     if (d.chartType == "line"){
                         if(Math.abs(Math.round(d.xPoints[i+1]*d.scale-d.xPoints[i]*d.scale) - width) > 3) { 
@@ -368,31 +380,35 @@ export function WigglePixiLine() {
 
                 if(d.chartType == "bar" || d.chartType == "heatmap"){
                     d.pMain.scale.x = scale;
-                  //  sizeChanged();
+              //      sizeChanged();
                     return;
                 }
                 
-                d.pMain.clear();
                 let divider = 1000;
                 if(scale < 8) {
                     divider = 1000;
-                } else if(scale >= 8 && scale < 10000){
+                } else {
                     divider = 100;
-                }  else{
-                    divider = 1/100;
-                }
+                } 
+
+                d.pMain.clear();
 
                 if(Math.round(d.preScale*divider) != Math.round(scale*divider)){
+
                     d.pMain.scale.x = 1;
                     for (let tileIdStr in d.tileGraphics) {
-                        if ((tileIdStr in shownT)) {
+                        if ((tileIdStr in d.shownT)) {
                             //we're displaying graphics that are no longer necessary,
                             //so we need to get rid of them
                             d.pMain.removeChild(d.tileGraphics[tileIdStr]);
+                            d.tileGraphics[tileIdStr].destroy();
                             delete d.tileGraphics[tileIdStr];
                         }
                     }
                     d.pMain.removeChild(d.tileGraphics[1000]);
+                    if(d.tileGraphics[1000] != null){
+                       d.tileGraphics[1000].destroy();
+                    }
                     delete d.tileGraphics[1000];
 
                     let graphics = new PIXI.Graphics();
@@ -401,7 +417,7 @@ export function WigglePixiLine() {
                     //console.log("xpoints" +xPoints.length);
                     let width = Math.round(d.xPoints[1]*scale-d.xPoints[0]*scale);
 
-                    for(let i = 0; i < d.xPoints.length-1; i++){
+                    for(let i = 0; i < d.xPoints.length; i++){
  
 
                         if (d.chartType == "line"){
