@@ -14,7 +14,7 @@ export function WigglePixiLine() {
     var xPoints;
     var yPoints;
     var tileIDs;
-    
+    let m = 0;
     var trackH = 50;
     var shownT = {};
 
@@ -94,7 +94,7 @@ export function WigglePixiLine() {
                 d.chartType = "line";
             }
 
-             if (!('onchange' in d)) {
+            if (!('onchange' in d)) {
                 $("#mode input[name=type]").change(function () { 
     
                     var selectedChartType = $("#mode input[name=type]:checked").val();
@@ -105,6 +105,22 @@ export function WigglePixiLine() {
                 
                 
                 });
+                if(m == 0){
+                   $(".track").mousemove(function(e) {
+                       // var parentOffset = $(this).parent().offset();
+                        var $div = $('.track');
+                        var mouse = {x:e.clientX,y:e.clientY};
+                        var top = $(this).css("top");
+                        top = parseInt(top, 10);
+                        var div = {x:$div.offset().left - $(window).scrollLeft(),y:$div.offset().top - $(window).scrollTop()};
+                        console.log('x:' + (mouse.x - div.x) + ' y:' + (mouse.y - div.y - top));
+                        console.log(Math.floor((mouse.x - div.x - d.translate[0])/d.scale));
+                       // console.log(d.xPoints)
+                       // console.log($(this).css("top"));
+                    }); 
+                    m++;
+                }
+                
                 d.onchange = true;
             }
 
@@ -118,6 +134,7 @@ export function WigglePixiLine() {
             }                  
 
             function redrawTile() {
+                console.log("redraw called")
                 let tileData = d3.select(this).selectAll('.tile-g').data();
                 let minVisibleValue = Math.min(...tileData.map((x) => x.valueRange[0]));
                 let maxVisibleValue = Math.max(...tileData.map((x) => x.valueRange[1]));
@@ -176,7 +193,7 @@ export function WigglePixiLine() {
                         /** if rect */
                         if(d.chartType == "bar"){
                             if (height > 0 && width > 0) {
-                               graphics.drawRect(xPos, d.height - d.height*height, width, d.height*height);
+                                graphics.drawRect(xPos, d.height - d.height*height, width, d.height*height);
                             }
                             
                         } else if (d.chartType == "line"){
@@ -187,19 +204,19 @@ export function WigglePixiLine() {
                             graphics.lineTo(xScale(tileXScale(i+1))*d.scale, d.height - d.height*yScale(tileData[i+1]));
                             
                         } else if(d.chartType == "point"){
-                            graphics.drawCircle(xScale(tileXScale(i+1))*d.scale, d.height - d.height*yScale(tileData[i+1]), 1);
+                            graphics.drawRect(xScale(tileXScale(i+1))*d.scale, d.height - d.height*yScale(tileData[i+1]), 1, 1);
                             
                               
                         } else if(d.chartType == "heatmap"){
 
-                           // if (height > 0 && width > 0) {
+                          
                                 if(color(height).replace("#","0x") == null){
                                     console.log("this is why im broken")
                                 }
                                 graphics.beginFill(color(height).replace("#","0x"), 1);
                                 graphics.drawRect(xPos, 0, width, d.height);
                                 graphics.endFill();
-                            //}
+                            
                             
                         } 
 
@@ -234,9 +251,10 @@ export function WigglePixiLine() {
                            k++; 
                         }
                          
-                         let newGraphics = new PIXI.Graphics();
-                         //drawTileLine(newGraphics, tileData[i]);
+                         let newGraphics = new PIXI.Graphics();                        
+                        
                          drawTile(newGraphics, tileData[i]);
+                         
                          d.pMain.addChild(newGraphics);
                          tileIDs.push(tileData[i].tileId);
                          d.tileGraphics[tileData[i].tileId] = newGraphics
@@ -278,7 +296,6 @@ export function WigglePixiLine() {
 
             
             function redraw(){
-                console.log(d.xPoints)
                 d.pMain.clear();
                 d.pMain.position.x = d.translate[0];
                 for (let tileIdStr in d.tileGraphics) {
@@ -337,11 +354,14 @@ export function WigglePixiLine() {
 
                         graphics.lineTo(d.xPoints[i+1]*d.scale, d.height-d.yPoints[i+1]*d.height);
                     } else if (d.chartType == "point"){
-                        graphics.drawCircle(d.xPoints[i]*d.scale, d.height-d.yPoints[i]*d.height, 1);
+                        graphics.drawRect(d.xPoints[i]*d.scale, d.height-d.yPoints[i]*d.height, 1, 1);
                            
                     } else if(d.chartType == "bar"){
                         graphics.beginFill(0xFF700B, 1);
+                       
                         graphics.drawRect(d.xPoints[i], d.height-d.yPoints[i]*d.height, d.xPoints[i+1]-d.xPoints[i], d.height*d.yPoints[i]);
+               
+
                         graphics.endFill();
 
                     } else if(d.chartType == "heatmap"){
@@ -353,6 +373,8 @@ export function WigglePixiLine() {
                     }
 
 
+                    
+                    
                     
                     graphics.endFill();
                     d.pMain.addChild(graphics);
@@ -421,6 +443,7 @@ export function WigglePixiLine() {
  
 
                         if (d.chartType == "line"){
+                          
                             if(Math.abs(Math.round(d.xPoints[i+1]*scale-d.xPoints[i]*scale) - width) > 3) { 
                                 graphics.lineStyle(0, 0xFF0000, 1);
                             } else {
@@ -434,7 +457,7 @@ export function WigglePixiLine() {
                             
                         } else {
                             
-                                graphics.drawCircle(d.xPoints[i]*scale, d.height-d.yPoints[i]*d.height, 1);
+                                graphics.drawRect(d.xPoints[i]*scale, d.height-d.yPoints[i]*d.height, 1, 1);
                          //   if(xPoints[i]*scale > (-translate[0])){
                                // graphics.visible = true;
                            // } else{
