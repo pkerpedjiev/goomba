@@ -86,6 +86,7 @@ var bigSvg = bigDiv.append('svg')
 .attr('position', 'absolute')
 .attr('width', width)
 .attr('height', height)
+.style("margin-top","-20px");
 
 
 
@@ -93,17 +94,39 @@ let bigRect = bigSvg.append('rect')
 .attr('width', width)
 .attr('height', height)
 .style('fill', 'transparent')
-.style('stroke', 'yellow')
+.style('stroke', 'black') 
 .style('stroke-width', '5px')
+
+var draggableTrack = goomba.DraggableTrack()
+    .width(width)
+    .height(trackHeight);
 
 let xScale = d3.scale.linear().domain([0, 5000000])
     .range([0, width]);
+
+//let yScale = d3.scale.linear().domain([0, 100000])
+  //  .range([0, height]);
+
+var xAxis = d3.svg.axis()
+                .orient("bottom")
+                .scale(xScale);
+
+//var yAxis = d3.svg.axis()
+  //              .orient("right")
+    //            .scale(yScale);
+
+bigSvg.append("g").attr("class", "x axis");
+
+
+
+bigSvg.select('g.x.axis').call(xAxis);
 
 let zoomDispatch = d3.dispatch('zoom');
 var zoom = d3.behavior.zoom()
     .x(xScale)
     .on('zoom', function() {
         zoomDispatch.zoom(zoom.translate(), zoom.scale());
+        bigSvg.select('g.x.axis').call(xAxis);
     });
 
 
@@ -111,9 +134,7 @@ bigRect.call(zoom);
 
 let resizeDispatch = d3.dispatch('resize');
 
-var draggableTrack = goomba.DraggableTrack()
-    .width(width)
-    .height(trackHeight);
+
 
 
 
@@ -123,36 +144,36 @@ var wigglePixiTrack = goomba.WigglePixiLine()
     .zoomDispatch(zoomDispatch);
 
 trackData = [
-        {'width': width, 'height': 50, 
+        {'width': width, 'height': 30, 
         'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
-      {'width': width, 'height': 10, 
+      {'width': width, 'height': 30, 
         'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
         
-        {'width': width, 'height': 10, 
+        {'width': width, 'height': 30, 
         'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
-        {'width': width, 'height': 10, 
-        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
-
-        {'width': width, 'height': 10, 
-        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
-        {'width': width, 'height': 10, 
+        {'width': width, 'height': 30, 
         'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
 
-        {'width': width, 'height': 10, 
+        {'width': width, 'height': 30, 
         'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
-        {'width': width, 'height': 10, 
-        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
-
-        {'width': width, 'height': 10, 
-        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
-        {'width': width, 'height': 10, 
-        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
-        {'width': width, 'height': 10, 
-        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
-        {'width': width, 'height': 10, 
+        {'width': width, 'height': 30, 
         'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
 
-      /*   {'width': width, 'height': 10, 
+        {'width': width, 'height': 30, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+        {'width': width, 'height': 30, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+
+        {'width': width, 'height': 30, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+        {'width': width, 'height': 30, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+        {'width': width, 'height': 30, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+        {'width': width, 'height': 30, 
+        'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
+
+       /* {'width': width, 'height': 10, 
         'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
         {'width': width, 'height': 10, 
         'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
@@ -227,7 +248,7 @@ trackData = [
         {'width': width, 'height': 10, 
         'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
 
-        /*{'width': width, 'height': 10, 
+        {'width': width, 'height': 10, 
         'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
         {'width': width, 'height': 10, 
         'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
@@ -236,8 +257,8 @@ trackData = [
         'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},
         {'width': width, 'height': 10, 
         'source': awsDomain + '/tiles_test/wgEncodeCrgMapabilityAlign36mer.bw.genome.sorted.short.gz'},*/
-       // {'width': width, 'height': 60, 
-        //'source': awsDomain + '/tiles_test/E116-DNase.fc.signal.bigwig.bedGraph.genome.sorted.short.gz'},
+     //   {'width': width, 'height': 60, 
+       // 'source': awsDomain + '/tiles_test/E116-DNase.fc.signal.bigwig.bedGraph.genome.sorted.short.gz'},
         
 ];
 
@@ -248,7 +269,14 @@ let tracks = d3.select('.big-div')
 .append('div')
 .style('opacity', 0.5) 
 .classed('track', true)
-.call(draggableTrack)
+.call(draggableTrack);
+
+console.log("T");
+//console.log(tracks.clientHeight);
+//let trackSVG = tracks.append("svg").attr("height",tracks.clientHeight);
+ 
+//trackSVG.append("g").attr("class", "y axis");
+//trackSVG.select('g.y.axis').call(yAxis);
 
 var tiledArea = goomba.GenericTiledArea()
     .tileType('div')
@@ -259,7 +287,7 @@ var tiledArea = goomba.GenericTiledArea()
         d3.select(this).call(wigglePixiTrack);
         });
 
-tracks.call(tiledArea)
+tracks.call(tiledArea);
 
 animate();
 
@@ -287,7 +315,7 @@ function animate() {
 
 
 
- /*   
+    /*
 goomba.ChromosomeInfo(chromInfoFilename, (chromInfo) => {
     let xScale = d3.scale.linear().domain([0, chromInfo.totalLength])
     //let xScale = d3.scale.linear().domain([0, 10000000])
